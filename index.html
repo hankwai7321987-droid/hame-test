@@ -5,40 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>獵戶座任務：溯尋本源</title>
     <style>
-        body { margin: 0; background: #05080a; color: white; font-family: sans-serif; overflow: hidden; touch-action: none; }
-        #game-ui { position: absolute; top: 8%; width: 100%; text-align: center; pointer-events: none; z-index: 10; }
-        .stat { font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #2ecc71; margin: 3px; }
-        #score { color: #f1c40f; font-size: 36px; }
-        #bonus-msg { font-size: 14px; color: #2ecc71; opacity: 0.8; }
-        canvas { display: block; }
-        .controls { position: absolute; bottom: 0; width: 100%; height: 160px; display: flex; background: rgba(0,0,0,0.8); padding-bottom: env(safe-area-inset-bottom); border-top: 2px solid #2ecc71; }
-        .btn { flex: 1; margin: 15px; border-radius: 20px; border: 2px solid #2ecc71; background: rgba(46, 204, 113, 0.1); color: white; font-size: 24px; font-weight: bold; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
-        .btn:active { background: #2ecc71; transform: scale(0.95); }
-        #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 30px; text-align: center; }
-        #start-btn { margin-top: 20px; padding: 15px 60px; background: #f1c40f; border: none; border-radius: 50px; font-size: 24px; font-weight: bold; box-shadow: 0 0 20px rgba(241, 196, 15, 0.5); }
-        #treasure-txt { font-size: 40px; color: #fff; text-shadow: 0 0 20px #f1c40f; margin-top: 20px; display:none; }
+        body { margin: 0; background: #050208; color: #e0e0e0; font-family: 'Courier New', Courier, monospace; overflow: hidden; touch-action: none; }
+        #game-ui { position: absolute; top: 5%; width: 100%; text-align: center; pointer-events: none; z-index: 10; }
+        .stat { font-size: 18px; font-weight: bold; text-shadow: 0 0 15px #ff00ff; color: #bc8cf2; letter-spacing: 2px; }
+        #score { color: #00ffcc; font-size: 42px; text-shadow: 0 0 20px rgba(0, 255, 204, 0.8); }
+        #bonus-msg { font-size: 12px; color: #9d00ff; opacity: 0.8; margin-top: 5px; }
+        canvas { display: block; filter: contrast(1.2) brightness(1.1); }
+        .controls { position: absolute; bottom: 0; width: 100%; height: 160px; display: flex; background: rgba(10, 5, 20, 0.9); padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #4a148c; }
+        .btn { flex: 1; margin: 15px; border-radius: 10px; border: 1px solid #7b1fa2; background: rgba(74, 20, 140, 0.2); color: #e0e0e0; font-size: 22px; font-weight: bold; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; box-shadow: inset 0 0 10px rgba(123, 31, 162, 0.5); }
+        .btn:active { background: #7b1fa2; color: #fff; box-shadow: 0 0 20px #7b1fa2; }
+        #overlay { position: fixed; inset: 0; background: radial-gradient(circle, #1a0a2e 0%, #050208 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 30px; text-align: center; }
+        #start-btn { margin-top: 30px; padding: 18px 60px; background: #4a148c; color: #00ffcc; border: 2px solid #00ffcc; border-radius: 5px; font-size: 22px; font-weight: bold; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 15px #4a148c; }
+        #treasure-txt { font-size: 48px; color: #fff; text-shadow: 0 0 30px #00ffcc, 0 0 50px #00ffcc; margin-top: 20px; display:none; font-weight: bold; letter-spacing: 10px; animation: glow 2s infinite alternate; }
+        @keyframes glow { from { opacity: 0.6; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
     </style>
 </head>
 <body>
 
 <div id="game-ui">
-    <div class="stat">分數: <span id="score">0</span></div>
-    <div id="bonus-msg">當前球值: 50</div>
-    <div class="stat">剩餘時間: <span id="timer">30</span>s</div>
+    <div class="stat">精神同步率: <span id="score">0</span></div>
+    <div id="bonus-msg">通訊狀態: 掃描中...</div>
+    <div class="stat">封印瓦解倒數: <span id="timer">30</span>s</div>
 </div>
 
 <canvas id="canvas"></canvas>
 
 <div class="controls">
-    <div class="btn" id="btn-0">左</div>
-    <div class="btn" id="btn-1">中</div>
-    <div class="btn" id="btn-2">右</div>
+    <div class="btn" id="btn-0">L</div>
+    <div class="btn" id="btn-1">M</div>
+    <div class="btn" id="btn-2">R</div>
 </div>
 
 <div id="overlay">
-    <h1 id="m-title" style="color:#2ecc71">索拉卡斯遺蹟：第二階段</h1>
-    <p id="m-desc">邪惡能量已進入靜止狀態。<br>按錯按鈕會導致能量反噬（扣分）。<br>連續淨化 40 顆以上能量以達成目標。<br><br><b>挑戰目標：10,000 分</b></p>
-    <button id="start-btn">開啟淨化音效並啟動</button>
+    <h1 style="color:#bc8cf2; letter-spacing: 5px;">阿薩斯：精神試煉</h1>
+    <p style="color:#8e24aa; font-size: 14px;">「阿薩斯」正在侵蝕你的意識...<br>點擊對應方位的淨化節點以維持平衡。<br>錯誤的點擊將引發精神反噬。<br><br><b>目標分數：10,000</b></p>
+    <button id="start-btn">連結精神網絡</button>
     <div id="treasure-txt">溯 尋 本 源</div>
 </div>
 
@@ -52,37 +53,47 @@ const overlay = document.getElementById('overlay');
 const treasureTxt = document.getElementById('treasure-txt');
 
 let score = 0, timeLeft = 30, gameActive = false, ballsCleared = 0;
-let balls = []; // 永遠維持 6 顆
-let particles = [];
-let laneWidth, ballSize, targetY;
+let balls = [], particles = [], speedLines = [];
+let laneWidth, ballSize, targetY, shakeTime = 0;
 
-// 音效引擎
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
+// 音效系統
 let audioCtx;
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
 
-function initAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
-
-function playSound(freq, type, duration, vol) {
+function playSynthSound(freq, type, duration, vol, slide = true) {
     if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = type;
     osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(freq/2, audioCtx.currentTime + duration);
+    if(slide) osc.frequency.exponentialRampToValueAtTime(freq/4, audioCtx.currentTime + duration);
     gain.gain.setValueAtTime(vol, audioCtx.currentTime);
     gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + duration);
+}
+
+// 史詩級背景低鳴
+function playAmbientDrone() {
+    if (!gameActive || !audioCtx) return;
+    playSynthSound(60 + Math.random()*10, 'triangle', 2, 0.05, false);
+    setTimeout(playAmbientDrone, 1500);
 }
 
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     laneWidth = canvas.width / 3;
-    ballSize = Math.min(laneWidth * 0.6, 90);
-    targetY = canvas.height - 260;
+    ballSize = Math.min(laneWidth * 0.65, 100);
+    targetY = canvas.height - 240;
+    // 初始化速度線
+    speedLines = [];
+    for(let i=0; i<30; i++) speedLines.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, l: Math.random()*50 + 20, s: Math.random()*15 + 5});
 }
 window.addEventListener('resize', resize);
 resize();
@@ -90,106 +101,98 @@ resize();
 class Particle {
     constructor(x, y, color) {
         this.x = x; this.y = y;
-        this.vx = (Math.random() - 0.5) * 15;
-        this.vy = (Math.random() - 0.5) * 15;
-        this.alpha = 1;
-        this.color = color;
+        this.vx = (Math.random() - 0.5) * 20;
+        this.vy = (Math.random() - 0.5) * 20;
+        this.alpha = 1; this.color = color;
     }
     update() { this.x += this.vx; this.y += this.vy; this.alpha -= 0.03; }
     draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.fillStyle = this.color;
-        ctx.beginPath(); ctx.arc(this.x, this.y, 4, 0, Math.PI*2); ctx.fill();
-        ctx.restore();
+        ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
+        ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI*2); ctx.fill(); ctx.restore();
     }
-}
-
-function getBallValue() {
-    if (ballsCleared < 20) return 50;
-    if (ballsCleared < 40) return 100;
-    return 150;
 }
 
 function createBall() {
     const lane = Math.floor(Math.random() * 3);
-    const hue = (ballsCleared * 5) % 360; // 顏色隨進度改變
-    return {
-        lane: lane,
-        currentY: -100,
-        color: `hsl(${hue}, 80%, 50%)`
-    };
-}
-
-function fillQueue() {
-    while (balls.length < 6) {
-        balls.push(createBall());
-    }
+    const hues = [280, 300, 260]; // 阿薩斯的紫色系
+    return { lane: lane, currentY: -200, color: `hsl(${hues[Math.floor(Math.random()*hues.length)]}, 100%, 50%)` };
 }
 
 function handleInput(lane) {
     if (!gameActive || balls.length === 0) return;
-
-    const val = getBallValue();
+    const val = ballsCleared < 20 ? 50 : (ballsCleared < 40 ? 100 : 150);
+    
     if (balls[0].lane === lane) {
-        // 成功
-        score += val;
-        ballsCleared++;
-        playSound(800, 'sine', 0.2, 0.3); // 高頻淨化音
-        for(let i=0; i<25; i++) particles.push(new Particle(lane * laneWidth + laneWidth/2, targetY, "#fff"));
+        score += val; ballsCleared++;
+        playSynthSound(600 + ballsCleared*10, 'sine', 0.4, 0.2); // 成功音效隨進度升高
+        for(let i=0; i<30; i++) particles.push(new Particle(lane * laneWidth + laneWidth/2, targetY, "#00ffcc"));
         balls.shift();
-        fillQueue();
+        balls.push(createBall());
     } else {
-        // 失敗
         score = Math.max(0, score - val);
-        playSound(150, 'sawtooth', 0.3, 0.2); // 低音打擊感
-        ctx.fillStyle = "rgba(255, 0, 0, 0.4)";
+        shakeTime = 15; // 震動效果
+        playSynthSound(100, 'sawtooth', 0.5, 0.3); // 失敗低音
+        ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     scoreEl.innerText = score;
-    bonusEl.innerText = `當前球值: ${getBallValue()} (已淨化: ${ballsCleared})`;
+    bonusEl.innerText = `意識層級: ${val === 50 ? '表面' : (val === 100 ? '深層' : '核心')} | 淨化: ${ballsCleared}`;
 }
 
 function update() {
     if (!gameActive) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 畫面震動邏輯
+    let sx = 0, sy = 0;
+    if (shakeTime > 0) {
+        sx = (Math.random() - 0.5) * 20;
+        sy = (Math.random() - 0.5) * 20;
+        shakeTime--;
+    }
 
-    // 背景線
-    ctx.strokeStyle = "rgba(46, 204, 113, 0.15)";
-    ctx.lineWidth = 3;
+    ctx.save();
+    ctx.translate(sx, sy);
+    ctx.clearRect(-20, -20, canvas.width+40, canvas.height+40);
+
+    // 1. 繪製速度感背景
+    ctx.strokeStyle = "rgba(157, 0, 255, 0.1)";
+    ctx.lineWidth = 1;
+    speedLines.forEach(l => {
+        ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(l.x, l.y - l.l); ctx.stroke();
+        l.y += l.s; if (l.y > canvas.height) { l.y = 0; l.x = Math.random()*canvas.width; }
+    });
+
+    // 2. 繪製軌道
+    ctx.strokeStyle = "rgba(0, 255, 204, 0.05)";
     for(let i=1; i<3; i++) {
         ctx.beginPath(); ctx.moveTo(i * laneWidth, 0); ctx.lineTo(i * laneWidth, canvas.height); ctx.stroke();
     }
 
-    // 繪製固定位置的 6 顆球
+    // 3. 繪製球體
     balls.forEach((b, index) => {
-        let destY = targetY - (index * (ballSize + 25));
-        // 平滑移動感
-        if (b.currentY === -100) b.currentY = destY - 100; // 初次生成的掉落感
-        b.currentY += (destY - b.currentY) * 0.2;
+        let destY = targetY - (index * (ballSize + 30));
+        if (b.currentY === -200) b.currentY = destY - 300;
+        b.currentY += (destY - b.currentY) * 0.25;
 
         ctx.save();
-        if (index === 0) { // 當前目標發光
-            ctx.shadowBlur = 40;
-            ctx.shadowColor = "#fff";
-            ctx.strokeStyle = "white";
-            ctx.lineWidth = 6;
-            ctx.strokeRect(b.lane * laneWidth + 15, b.currentY - ballSize/2 - 10, laneWidth - 30, ballSize + 20);
+        if (index === 0) {
+            ctx.shadowBlur = 50; ctx.shadowColor = "#00ffcc";
+            ctx.strokeStyle = "rgba(0, 255, 204, 0.8)"; ctx.lineWidth = 4;
+            ctx.strokeRect(b.lane * laneWidth + 20, b.currentY - ballSize/2 - 10, laneWidth - 40, ballSize + 20);
         }
         
         let grad = ctx.createRadialGradient(b.lane * laneWidth + laneWidth/2, b.currentY, 0, b.lane * laneWidth + laneWidth/2, b.currentY, ballSize/2);
-        grad.addColorStop(0, "white");
-        grad.addColorStop(0.3, b.color);
-        grad.addColorStop(1, "rgba(0,0,0,0.8)");
+        grad.addColorStop(0, "#fff");
+        grad.addColorStop(0.4, b.color);
+        grad.addColorStop(1, "#000");
         ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(b.lane * laneWidth + laneWidth/2, b.currentY, ballSize/2, 0, Math.PI*2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(b.lane * laneWidth + laneWidth/2, b.currentY, ballSize/2, 0, Math.PI*2); ctx.fill();
         ctx.restore();
     });
 
     particles = particles.filter(p => p.alpha > 0);
     particles.forEach(p => { p.update(); p.draw(); });
+    ctx.restore();
 
     requestAnimationFrame(update);
 }
@@ -197,13 +200,17 @@ function update() {
 function startGame() {
     initAudio();
     score = 0; timeLeft = 30; ballsCleared = 0; balls = []; particles = [];
-    fillQueue();
+    for(let i=0; i<6; i++) balls.push(createBall());
     gameActive = true;
     overlay.style.display = 'none';
     treasureTxt.style.display = 'none';
     scoreEl.innerText = score;
-    bonusEl.innerText = `當前球值: 50 (已淨化: 0)`;
     
+    // 啟動環境音
+    playAmbientDrone();
+    // 啟動史詩開場音
+    playSynthSound(200, 'sine', 1.5, 0.4);
+
     let timerInterval = setInterval(() => {
         timeLeft--;
         timerEl.innerText = timeLeft;
@@ -220,16 +227,16 @@ function endGame() {
     gameActive = false;
     overlay.style.display = 'flex';
     const isWin = score >= 10000;
-    document.getElementById('m-title').innerText = isWin ? "使命達成" : "淨化中斷";
-    document.getElementById('m-desc').innerHTML = `最終得分: ${score}<br>總計淨化: ${ballsCleared} 顆能量`;
-    document.getElementById('start-btn').innerText = "再次嘗試";
+    document.getElementById('m-title').innerText = isWin ? "試煉通過" : "意識崩潰";
+    document.getElementById('m-desc').innerHTML = `最終同步率: ${score}<br>成功摧毀 ${ballsCleared} 個惡意節點`;
+    document.getElementById('start-btn').innerText = "重啟連結";
     if (isWin) {
         treasureTxt.style.display = 'block';
-        playSound(440, 'sine', 1, 0.3); // 史詩結尾音
+        playSynthSound(440, 'sine', 3, 0.5, false);
     }
 }
 
-// 事件綁定
+// 綁定按鈕
 [0, 1, 2].forEach(lane => {
     const btn = document.getElementById(`btn-${lane}`);
     const trigger = (e) => { e.preventDefault(); handleInput(lane); };
